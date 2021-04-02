@@ -3,11 +3,25 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>/</loc>
+    <lastmod>2021-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/post/</loc>
+    <lastmod>2021-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/2021/03/30/who-would-have-been-in-the-2020-d1-men-s-lacrosse-final-four/</loc>
+    <lastmod>2021-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/2021/03/29/practice-blog-post/</loc>
+    <lastmod>2021-03-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/</loc>
+    <lastmod>2021-03-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/tutorial/</loc>
+    <lastmod>2021-03-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>/categories/</loc>
   </url><url>
     <loc>/about/</loc>
-  </url><url>
-    <loc>/tags/</loc>
   </url>
 </urlset>

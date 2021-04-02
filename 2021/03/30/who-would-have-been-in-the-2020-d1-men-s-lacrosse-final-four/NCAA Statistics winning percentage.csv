@@ -1,0 +1,76 @@
+Table 1
+Rank,Team,Won,Lost,Pct.
+1,Georgetown (Big East),6,0,1
+1,Cornell (Ivy League),5,0,1
+1,Princeton (Ivy League),5,0,1
+1,North Carolina (ACC),7,0,1
+1,Syracuse (ACC),5,0,1
+6,Mercer (SoCon),6,1,0.857
+7,Maryland (Big Ten),5,1,0.833
+7,Lehigh (Patriot),5,1,0.833
+7,Bucknell (Patriot),5,1,0.833
+7,Providence (Big East),5,1,0.833
+11,UMBC (America East),4,1,0.8
+11,Hobart (NEC),4,1,0.8
+13,Yale (Ivy League),3,1,0.75
+13,Army West Point (Patriot),6,2,0.75
+13,Dartmouth (Ivy League),3,1,0.75
+13,Duke (ACC),6,2,0.75
+13,Vermont (America East),3,1,0.75
+18,Stony Brook (America East),5,2,0.714
+18,Massachusetts (CAA),5,2,0.714
+18,Saint Joseph's (NEC),5,2,0.714
+18,Fairfield (CAA),5,2,0.714
+18,Penn St. (Big Ten),5,2,0.714
+18,Ohio St. (Big Ten),5,2,0.714
+24,Delaware (CAA),4,2,0.667
+24,Denver (Big East),4,2,0.667
+24,Virginia (ACC),4,2,0.667
+24,Loyola Maryland (Patriot),4,2,0.667
+24,Robert Morris (NEC),4,2,0.667
+29,Navy (Patriot),3,2,0.6
+29,Brown (Ivy League),3,2,0.6
+31,Hofstra (CAA),4,3,0.571
+31,Holy Cross (Patriot),4,3,0.571
+31,Villanova (Big East),4,3,0.571
+31,Michigan (Big Ten),4,3,0.571
+31,Air Force (SoCon),4,3,0.571
+31,Richmond (SoCon),4,3,0.571
+37,Utah (DI Independent),3,3,0.5
+37,Marist (MAAC),3,3,0.5
+37,Manhattan (MAAC),3,3,0.5
+37,Drexel (CAA),3,3,0.5
+37,Jacksonville (SoCon),3,3,0.5
+37,Hartford (America East),3,3,0.5
+37,Harvard (Ivy League),2,2,0.5
+37,Boston U. (Patriot),3,3,0.5
+45,UMass Lowell (America East),3,4,0.429
+45,Marquette (Big East),3,4,0.429
+45,St. John's (NY) (Big East),3,4,0.429
+45,Bryant (NEC),3,4,0.429
+49,Penn (Ivy League),2,3,0.4
+49,Notre Dame (ACC),2,3,0.4
+49,Albany (NY) (America East),2,3,0.4
+49,Detroit Mercy (MAAC),2,3,0.4
+53,Mount St. Mary's (NEC),3,5,0.375
+54,Johns Hopkins (Big Ten),2,4,0.333
+54,Siena (MAAC),2,4,0.333
+54,Monmouth (MAAC),2,4,0.333
+54,Rutgers (Big Ten),2,4,0.333
+58,Cleveland St. (DI Independent),2,5,0.286
+59,Bellarmine (SoCon),2,6,0.25
+59,High Point (SoCon),2,6,0.25
+61,Wagner (NEC),1,5,0.167
+61,Binghamton (America East),1,5,0.167
+61,Sacred Heart (NEC),1,5,0.167
+64,NJIT (NEC),1,6,0.143
+64,LIU (NEC),1,6,0.143
+64,Furman (SoCon),1,6,0.143
+67,Hampton (DI Independent),0,6,0
+67,Quinnipiac (MAAC),0,6,0
+67,Colgate (Patriot),0,6,0
+67,Canisius (MAAC),0,5,0
+67,VMI (SoCon),0,4,0
+67,St. Bonaventure (MAAC),0,6,0
+67,Towson (CAA),0,6,0
+67,Lafayette (Patriot),0,6,0
