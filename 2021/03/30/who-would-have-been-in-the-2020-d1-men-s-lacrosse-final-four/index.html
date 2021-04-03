@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">3 min read</span>
+    <span class="article-duration">6 min read</span>
     
 
     <h1 class="article-title">Who would have been in the 2020 D1 men&#39;s lacrosse final four?</h1>
@@ -76,6 +76,8 @@
 <script src="/2021/03/30/who-would-have-been-in-the-2020-d1-men-s-lacrosse-final-four/index_files/header-attrs/header-attrs.js"></script>
 
 
+<p>On March 12th, 2020, the NCAA dropped the hammer on the 2020 lacrosse season. While most teams were midway through their season, the question of who would have made it to the Final Four. The Final Four games would have been played on the Lincoln Financial Field in Philadelphia, Pennsylvania, but Coronavirus had other plans. Most people watching would have an educated guess that the ACC powerhouses Syracuse and The University of North Carolina would have been two of the four teams. Both teams were undefeated when the NCAA hit the kill switch. What wanders most peoples’ mind was who would have been the following two teams to take on the Goliaths. There was a hand full of undefeated teams at the mid-way mark of the seasons.</p>
+<p>Let us look at some numbers and find out who would have been the kings of the lacrosse world.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
@@ -95,6 +97,7 @@ library(ggalt)</code></pre>
 ##   grobX.absoluteGrob      ggplot2
 ##   grobY.absoluteGrob      ggplot2</code></pre>
 <pre class="r"><code>library(cowplot)</code></pre>
+<p>The three data sets I will be working with our Team statistics from Ncaa.org. We used Total scoring defense, face-off percentage, and total offense. I’m going to rely on mostly scoring defense and total offense.</p>
 <pre class="r"><code>scoringd &lt;- read_csv(&quot;NCAA Statistics scoring defense.csv&quot;, skip = 1)</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -107,12 +110,14 @@ library(ggalt)</code></pre>
 ##   `Per Game` = col_double()
 ## )</code></pre>
 <pre class="r"><code>totalo &lt;- read.csv(&quot;NCAA Statistics total offense.csv&quot;, skip = 1)</code></pre>
+<p>So when looking at all the records of teams when the season got canceled. There were 5 teams that were undefeated. Syracuse, UNC, Georgetown, Cornell, and Princeton. Here is the problem. There are only four teams allowed in the Final Four. What were going to do is compare all the top teams in Division 1 and see where these teams compare to the rest of the top 20.</p>
 <pre class="r"><code>both &lt;- totalo %&gt;% left_join(scoringd, by=c(&quot;Team&quot;, &quot;Games&quot;))</code></pre>
 <pre class="r"><code>undefeated &lt;- both %&gt;% filter(grepl(&quot;-0&quot;,W.L))</code></pre>
 <pre class="r"><code>top20o &lt;- both %&gt;% arrange(desc(Per.Game)) %&gt;% top_n(20, wt=Per.Game)
 top20d &lt;- both %&gt;% arrange(`Per Game`) %&gt;% top_n(20, wt=-`Per Game`) 
 
 undefeatedd &lt;- both %&gt;% filter(grepl(&quot;North Carolina&quot;, Team) | grepl(&quot;Syracuse&quot;, Team) | grepl(&quot;Georgetown&quot;, Team))</code></pre>
+<p>This code below creates a graph of the top twenty teams based on there total goals scored and goals against. The cross in the middle of the graph shows where average is. The teams in the first quadrant have a above average offense but a below average defense, the second quadrant shows teams with below average defense and below average offense. The third quadrant shows teams that are above average defense but below average offense. The fourth quadrant shows teams with above average defense and above average defense. When you look at the graph the top 5 teams are highlighted and marked with their name. What this graph shows is that all the top 5 teams are in the good defense good offense range except Cornell. Cornell was in the above average offense but below average defense. If we based who would be in the Final Four on this graph, Cornell would not make the cut. But it is way more complicated then that.</p>
 <pre class="r"><code>ggplot() + geom_point(data=both, aes(x=Per.Game, y=`Per Game`),color= &quot;grey&quot; ) + geom_point(data=undefeated, aes(x=Per.Game, y=`Per Game`), color=&quot;cyan&quot;) + geom_text_repel(data=undefeated, aes(x=Per.Game, y=`Per Game`, label=Team)) + geom_hline(yintercept=12, color=&quot;dark grey&quot;) + 
   geom_vline(xintercept=12, color=&quot;dark grey&quot;) + theme_light() + labs(x=&quot;goals per game&quot;, y=&quot;goals allowed pergame&quot;, title=&quot;Where do the top 5 teams fall?&quot;, subtitle=&quot;How well do these undefeated teams compare to the rest of the pack?&quot;, caption=&quot;Source: NCAA | By Casey Rogers&quot;) + 
   theme_minimal() + 
@@ -123,6 +128,7 @@ undefeatedd &lt;- both %&gt;% filter(grepl(&quot;North Carolina&quot;, Team) | g
     panel.grid.minor = element_blank()
     ) </code></pre>
 <p><img src="/2021/03/30/who-would-have-been-in-the-2020-d1-men-s-lacrosse-final-four/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The next code creates a cowplot with two bar graphs. We are looking at the same data but in a different angle. We need to see where these teams line up with goals allowed and goals scored with the rest of the top 20. We used two bar charts one with goals scored and the other with goals allowed. In this cowplot, the five undefeated teams are highlighted. The first graph shows “Goals scored”. Out of all the undefeated teams Cornell has the most goals scored. This time all five undefeated teams showed up as top dogs in this graph which made our question even harder. Out of the top 5 undefeated teams what 4 teams make the Final Four? The graph next to it shows “Goals allowed”. This graph also has the top undefeated teams highlighted. But this time there are only three of the five teams on this graph; Syracuse, UNC and Georgetown. Those three teams have also been in the top of every other graph.</p>
 <pre class="r"><code>bar1 &lt;- ggplot()+geom_bar(data=top20o, aes(x=reorder(Team, Per.Game), weight=Per.Game)) + geom_bar(data=undefeated, aes(x=reorder(Team, Per.Game), weight=Per.Game), fill=&quot;cyan&quot;) + coord_flip() + labs(x=&quot;&quot;, y=&quot;Goals Scored&quot;, title=&quot;Goals allowed by top 20 teams&quot;, subtitle=&quot;Where do the undefeated teams fall in scoring defense?&quot;) + theme_minimal() + 
   theme(
     plot.title = element_text(size = 16, face = &quot;bold&quot;),
@@ -140,6 +146,8 @@ undefeatedd &lt;- both %&gt;% filter(grepl(&quot;North Carolina&quot;, Team) | g
     ) </code></pre>
 <pre class="r"><code>plot_grid(bar1,bar2)</code></pre>
 <p><img src="/2021/03/30/who-would-have-been-in-the-2020-d1-men-s-lacrosse-final-four/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>So now we have three out of the four teams in the Final Four now it comes down to either Princeton or Cornell. So far we figured out that Cornell has the worst defense out of the two but Cornell also scores more goals then Princeton.</p>
+<p>The third and final graph is the tie breaker. This code creates a lollipop graph that shows “Face-off winning percentage” The graph shows the top 40 teams in this category. Again Georgetown Syracuse, and UNC are the three best out of the five undefeated teams. Cornell tops Princeton in this category as well.</p>
 <pre class="r"><code>faceoffs &lt;- read_csv(&quot;NCAA Statistics faceoffs.csv&quot;,  skip = 1) %&gt;% top_n(40, wt=Pct.)</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -172,6 +180,7 @@ undefeatedd &lt;- both %&gt;% filter(grepl(&quot;North Carolina&quot;, Team) | g
     axis.text.y = element_text(size=6.5)
   )</code></pre>
 <p><img src="/2021/03/30/who-would-have-been-in-the-2020-d1-men-s-lacrosse-final-four/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>So in conclusion, out of the top five undefeated teams the four that would make the Final Four would be Syracuse, UNC, Georgetown, and Cornell. The reason Cornell would make it in over Princeton is because they have a better Face-off winning percentage and they score more goals. Even though Cornell’s defense was below average they have a better face off winning percentage which allows them to get the ball more and allow them to score more. They are the most scoring team out of the five undefeated team, which is why they find themselves in the Final Four.</p>
 
     </div>
   </article>
