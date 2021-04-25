@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.81.0" />
+
+
+<title>Did the new faceoff rule change lacrosse? - A Hugo website</title>
+<meta property="og:title" content="Did the new faceoff rule change lacrosse? - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">11 min read</span>
+    
+
+    <h1 class="article-title">Did the new faceoff rule change lacrosse?</h1>
+
+    
+    <span class="article-date">2021-04-21</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2021/04/21/did-the-new-faceoff-rule-change-lacrosse/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)
+library(gt)
+library(ggrepel)
+library(ggalt)</code></pre>
+<p>The 2021 college lacrosse season got flipped upside down when a new face off rule was introduced. For decades people spent hundreds and thousands of dollars on lessons and personal trainers to perfect a specific face off move. Mostly every face-off guy in the game used the “pinch and pop”. To describe this move the player would start on one knee and have his hands in a motorcycle grip on the stick. At the sound of the whistle, the player would try to pitch the ball in the head of his stick and rake the ball out as fast as he could to win the face-off. Many kids and players became an expert at this move and a lot of times in games the faceoffs would be very one-sided. The NCAA changed this by restricting face-off guys to go down on one knee so they would have to stand on two feet bent over and their hands would have to be in a neutral position. Although it doesn’t seem like a big change for a lot of these guys, it was very hard to get adapted to. After years of training and working on one specific move, they would have to change everything.</p>
+<p>Did this rule change lacrosse? Will the best face-off guys from 2020 find themselves losing more because of the rule? Let’s look at some numbers and see how they did.</p>
+<p>The four data sets I will be working with are statistics from ncaa.org. The first two data sets are overall team face-off percentages from 2020 and 2021. The other two data sets are individual player face-off winning percentages from 2020 and 2021.</p>
+<pre class="r"><code>faceoff20team &lt;- read_csv(&quot;NCAA Statistics faceoffs.csv&quot;, skip = 1) %&gt;% mutate(Season = &quot;2020&quot;)</code></pre>
+<pre class="r"><code>faceoff21team &lt;- read_csv(&quot;team Facoff winning percentage.csv&quot;, skip = 1) %&gt;% mutate(Season = &quot;2021&quot;)</code></pre>
+<pre class="r"><code>teamfaceoffs &lt;- bind_rows(faceoff20team, faceoff21team)</code></pre>
+<pre class="r"><code>bottom10 &lt;- teamfaceoffs %&gt;% select(Team,Pct., Season) %&gt;% pivot_wider(names_from = Season, values_from = Pct.) %&gt;% na.omit() %&gt;% mutate(Change=`2021`-`2020`) %&gt;% arrange((Change)) %&gt;% top_n(10, wt=-Change)</code></pre>
+<pre class="r"><code>top10 &lt;- teamfaceoffs %&gt;% select(Team,Pct., Season) %&gt;% pivot_wider(names_from = Season, values_from = Pct.) %&gt;% na.omit() %&gt;% mutate(Change=`2021`-`2020`) %&gt;% arrange(desc(Change)) %&gt;% top_n(10, wt=Change)</code></pre>
+<pre class="r"><code>teamfaceoffs %&gt;% filter(Team %in% top10$Team)</code></pre>
+<pre><code>## # A tibble: 20 x 9
+##     Rank Team             Games `W-L` `FOs Won` `FOs Lost` `TM FOT`  Pct. Season
+##    &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; 
+##  1    14 Quinnipiac (MAA…     6 0-6          99         64      163 0.607 2020  
+##  2    48 Monmouth (MAAC)      6 2-4          56         69      125 0.448 2020  
+##  3    55 Vermont (Americ…     4 3-1          39         51       90 0.433 2020  
+##  4    57 Notre Dame (ACC)     5 2-3          56         75      131 0.427 2020  
+##  5    59 Villanova (Big …     7 4-3          84        120      204 0.412 2020  
+##  6    67 LIU (NEC)            7 1-6          69        129      198 0.348 2020  
+##  7    68 Albany (NY) (Am…     5 2-3          55        104      159 0.346 2020  
+##  8    69 Binghamton (Ame…     6 1-5          51         97      148 0.345 2020  
+##  9    70 Canisius (MAAC)      5 0-5          49         94      143 0.343 2020  
+## 10    74 St. Bonaventure…     6 0-6          31        114      145 0.214 2020  
+## 11     2 Quinnipiac (MAA…     6 4-2          96         36      132 0.727 2021  
+## 12     3 Monmouth (MAAC)      6 5-1          84         38      122 0.689 2021  
+## 13     5 Vermont (Americ…     8 5-3         147         70      217 0.677 2021  
+## 14     7 Notre Dame (ACC)     7 6-1         115         60      175 0.657 2021  
+## 15    16 Binghamton (Ame…     7 3-4          88         70      158 0.557 2021  
+## 16    17 LIU (NEC)            8 6-2         130        104      234 0.556 2021  
+## 17    18 Canisius (MAAC)      7 3-4          92         75      167 0.551 2021  
+## 18    23 Villanova (Big …     8 5-3         111         93      204 0.544 2021  
+## 19    34 Albany (NY) (Am…     9 6-3         120        123      243 0.494 2021  
+## 20    59 St. Bonaventure…     7 3-4          56         98      154 0.364 2021</code></pre>
+<pre class="r"><code>faceofftable &lt;- teamfaceoffs %&gt;% select(Team,Pct., Season) %&gt;% pivot_wider(names_from = Season, values_from = Pct.) %&gt;% na.omit() %&gt;% mutate(Change=`2021`-`2020`) %&gt;% arrange(desc(`2020`)) %&gt;% top_n(10, wt=`2020`)</code></pre>
+<p>The first table we are going to look at is a comparison between the team face-off winning percentages from 2020 to 2021. The table also shows how much change between the two years there is. Out of all the top teams, only two increase their face-off winning percentage. All the other teams decreased. So after looking at this data, one might conclude that this rule has dramatically changed the game of lacrosse.</p>
+<pre class="r"><code>faceofftable %&gt;%
+  gt() %&gt;% 
+  tab_header(
+    title = &quot;Did The new rule Change lacrosse?&quot;,
+    subtitle = &quot;With the sudden change of the faceoff rule did teams benifit or suffer?&quot;
+  ) %&gt;% tab_style(
+    style = cell_text(color = &quot;black&quot;, weight = &quot;bold&quot;, align = &quot;left&quot;),
+    locations = cells_title(&quot;title&quot;)
+  ) %&gt;% tab_style(
+    style = cell_text(color = &quot;black&quot;, align = &quot;left&quot;),
+    locations = cells_title(&quot;subtitle&quot;)
+  ) %&gt;%
+  tab_source_note(
+    source_note = &quot;By Casey Rogers&quot;
+  ) %&gt;%
+  tab_source_note(
+    source_note = md(&quot;Source: [NCAA.com](NCAA.com)&quot;)
+  ) %&gt;% tab_style(
+    style = cell_text(color = &quot;black&quot;, weight = &quot;bold&quot;),
+    locations = cells_body(
+      columns = vars(Team)
+    )
+  ) %&gt;% 
+  tab_style(
+    style = cell_text(color = &quot;red&quot;, weight = &quot;bold&quot;),
+    locations = cells_body(
+      columns = vars(Change),
+      rows = Change &lt; 0
+    )
+  ) %&gt;% 
+  tab_style(
+    style = cell_text(color = &quot;green&quot;, weight = &quot;normal&quot;),
+    locations = cells_body(
+      columns = vars(Change),
+      rows = Change &gt; 0
+    )
+  ) %&gt;% 
+  opt_row_striping() %&gt;% 
+  opt_table_lines(&quot;none&quot;) %&gt;% 
+  tab_style(
+    style = cell_borders(sides = c(&quot;top&quot;, &quot;bottom&quot;), 
+                         color = &quot;grey&quot;, weight = px(1)),
+    locations = cells_column_labels(everything())
+  )</code></pre>
+<pre><code>## Warning: The `.dots` argument of `group_by()` is deprecated as of dplyr 1.0.0.</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#poeymgkrhk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: none;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#poeymgkrhk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#poeymgkrhk .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#poeymgkrhk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#poeymgkrhk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#poeymgkrhk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#poeymgkrhk .gt_column_spanner {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#poeymgkrhk .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#poeymgkrhk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#poeymgkrhk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#poeymgkrhk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#poeymgkrhk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#poeymgkrhk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#poeymgkrhk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#poeymgkrhk .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#poeymgkrhk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: none;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#poeymgkrhk .gt_table_body {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#poeymgkrhk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#poeymgkrhk .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#poeymgkrhk .gt_left {
+  text-align: left;
+}
+
+#poeymgkrhk .gt_center {
+  text-align: center;
+}
+
+#poeymgkrhk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#poeymgkrhk .gt_font_normal {
+  font-weight: normal;
+}
+
+#poeymgkrhk .gt_font_bold {
+  font-weight: bold;
+}
+
+#poeymgkrhk .gt_font_italic {
+  font-style: italic;
+}
+
+#poeymgkrhk .gt_super {
+  font-size: 65%;
+}
+
+#poeymgkrhk .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="poeymgkrhk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: black; text-align: left; font-weight: bold;">Did The new rule Change lacrosse?</th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: black; text-align: left;">With the sudden change of the faceoff rule did teams benifit or suffer?</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: grey; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: grey;">Team</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: grey; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: grey;">2020</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: grey; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: grey;">2021</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: grey; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: grey;">Change</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left" style="color: black; font-weight: bold;">Mercer (SoCon)</td>
+      <td class="gt_row gt_right">0.683</td>
+      <td class="gt_row gt_right">0.580</td>
+      <td class="gt_row gt_right" style="color: red; font-weight: bold;">-0.103</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_striped" style="color: black; font-weight: bold;">Loyola Maryland (Patriot)</td>
+      <td class="gt_row gt_right gt_striped">0.681</td>
+      <td class="gt_row gt_right gt_striped">0.543</td>
+      <td class="gt_row gt_right gt_striped" style="color: red; font-weight: bold;">-0.138</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="color: black; font-weight: bold;">Georgetown (Big East)</td>
+      <td class="gt_row gt_right">0.673</td>
+      <td class="gt_row gt_right">0.631</td>
+      <td class="gt_row gt_right" style="color: red; font-weight: bold;">-0.042</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_striped" style="color: black; font-weight: bold;">Syracuse (ACC)</td>
+      <td class="gt_row gt_right gt_striped">0.671</td>
+      <td class="gt_row gt_right gt_striped">0.473</td>
+      <td class="gt_row gt_right gt_striped" style="color: red; font-weight: bold;">-0.198</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="color: black; font-weight: bold;">Saint Joseph's (NEC)</td>
+      <td class="gt_row gt_right">0.646</td>
+      <td class="gt_row gt_right">0.686</td>
+      <td class="gt_row gt_right" style="color: green; font-weight: normal;">0.040</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_striped" style="color: black; font-weight: bold;">Lehigh (Patriot)</td>
+      <td class="gt_row gt_right gt_striped">0.638</td>
+      <td class="gt_row gt_right gt_striped">0.731</td>
+      <td class="gt_row gt_right gt_striped" style="color: green; font-weight: normal;">0.093</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="color: black; font-weight: bold;">Holy Cross (Patriot)</td>
+      <td class="gt_row gt_right">0.633</td>
+      <td class="gt_row gt_right">0.437</td>
+      <td class="gt_row gt_right" style="color: red; font-weight: bold;">-0.196</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_striped" style="color: black; font-weight: bold;">Denver (Big East)</td>
+      <td class="gt_row gt_right gt_striped">0.624</td>
+      <td class="gt_row gt_right gt_striped">0.617</td>
+      <td class="gt_row gt_right gt_striped" style="color: red; font-weight: bold;">-0.007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="color: black; font-weight: bold;">Marist (MAAC)</td>
+      <td class="gt_row gt_right">0.622</td>
+      <td class="gt_row gt_right">0.464</td>
+      <td class="gt_row gt_right" style="color: red; font-weight: bold;">-0.158</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_striped" style="color: black; font-weight: bold;">Hofstra (CAA)</td>
+      <td class="gt_row gt_right gt_striped">0.616</td>
+      <td class="gt_row gt_right gt_striped">0.667</td>
+      <td class="gt_row gt_right gt_striped" style="color: green; font-weight: normal;">0.051</td>
+    </tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="4">By Casey Rogers</td>
+    </tr>
+    <tr>
+      <td class="gt_sourcenote" colspan="4">Source: <a href="NCAA.com">NCAA.com</a></td>
+    </tr>
+  </tfoot>
+  
+</table></div>
+<pre class="r"><code>topfaceoff21 &lt;- faceoff21team %&gt;%
+  arrange(desc(Pct.)) %&gt;%
+  top_n(20, wt=Pct.)</code></pre>
+<pre class="r"><code>teamfaceoffbar &lt;- teamfaceoffs %&gt;%
+  select(Team,Pct., Season) %&gt;%
+  filter(Team %in% topfaceoff21$Team)</code></pre>
+<p>The next graph is a stacked bar chart. This allows us to visualize and compare where teams were last year compared to where they are this year after the rule change. For the most part it’s pretty consistent. Most of the teams dropped in faceoff percentages but not by a lot. Only a couple of teams changed with significant numbers. So far looking at this data the teams are mildly being affected by this new rule.</p>
+<pre class="r"><code>ggplot() + 
+  geom_bar(data=teamfaceoffbar, aes(x=reorder(Team, Pct.), weight=Pct., fill=Season))+
+  coord_flip()+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+       axis.ticks = element_blank()) + 
+         labs(x=&quot;&quot;, y=&quot;&quot;, title=&quot;Last years team faceoff percentage vrs this years &quot;, subtitle=&quot;see how the rule has changed lacross.&quot;, caption=&quot;Source: NCAA | By Casey Rogers&quot;) </code></pre>
+<p><img src="/2021/04/21/did-the-new-faceoff-rule-change-lacrosse/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>faceoff20indy &lt;- read_csv(&quot;2020 faceoff indy percent.csv&quot;, skip = 1) %&gt;% mutate(Season = &quot;2020&quot;)</code></pre>
+<pre><code>## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   Rank = col_double(),
+##   Player = col_character(),
+##   Cl = col_character(),
+##   Pos = col_character(),
+##   Games = col_double(),
+##   `FOs Won` = col_double(),
+##   `FOs Lost` = col_double(),
+##   `FOs Taken` = col_double(),
+##   `TM FOT` = col_double(),
+##   Pct. = col_double()
+## )</code></pre>
+<pre class="r"><code>faceoff21indy &lt;- read_csv(&quot;2021 faceoff percent.csv&quot;, skip = 1) %&gt;% mutate(Season = &quot;2021&quot;)</code></pre>
+<pre><code>## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   Rank = col_double(),
+##   Player = col_character(),
+##   Cl = col_character(),
+##   Pos = col_character(),
+##   Games = col_double(),
+##   `FOs Won` = col_double(),
+##   `FOs Lost` = col_double(),
+##   `FOs Taken` = col_double(),
+##   `TM FOT` = col_double(),
+##   Pct. = col_double()
+## )</code></pre>
+<pre class="r"><code>indyfaceoffs &lt;- bind_rows(faceoff20indy, faceoff21indy)</code></pre>
+<pre class="r"><code>topindyfaceoffs &lt;- indyfaceoffs %&gt;% 
+  group_by(Player, Season) %&gt;% select(Player,Pct.) %&gt;% pivot_wider(names_from = Season, values_from = Pct.) %&gt;% na.omit() %&gt;% arrange(desc(`2020`)) %&gt;% ungroup() %&gt;% top_n(10)</code></pre>
+<pre><code>## Adding missing grouping variables: `Season`</code></pre>
+<pre><code>## Selecting by 2021</code></pre>
+<p>The next graph I made was a dumbbell chart. We used the individual player face-off winning percentage from the years 2020 and 2021 to see where they were before the new rule and where they are after. The green dot represents the players’ percentage from 2020 and the red dot represents 2021. From looking at this data, it shows that most of the top 10 players actually got better after the rule, which goes against the other two graphs.</p>
+<pre class="r"><code>ggplot() + 
+  geom_dumbbell(
+    data = topindyfaceoffs, 
+    aes(y = reorder(`Player`, `2020`), x = `2020`, xend = `2021`), size = 1,
+    color = &quot;grey&quot;, colour_x = &quot;green&quot;, colour_xend = &quot;red&quot;) + labs(title = &quot;How did the rule affect the best players?&quot;, subtitle = &quot;the best players got better after the new rule.&quot;, caption = &quot;Source:NCAA | By Casey Rogers&quot;, x = &quot;pct of faceoffs won&quot;, y = &quot;player&quot;) + 
+  theme_minimal () + 
+  theme(
+    plot.title = element_text(size = 16, face = &quot;bold&quot;),
+    axis.title = element_text(size = 9, face = &quot;bold&quot;), 
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(size = 10),
+    panel.grid.minor = element_blank()) </code></pre>
+<p><img src="/2021/04/21/did-the-new-faceoff-rule-change-lacrosse/index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>In conclusion, the new rule definitely did change the game of lacrosse. A lot of teams face-off winning percentages dropped once the new rule was put in place. The weird thing about this data was that we see even though team face-off winning percentages went down, individual winning face-off percentages went up</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
